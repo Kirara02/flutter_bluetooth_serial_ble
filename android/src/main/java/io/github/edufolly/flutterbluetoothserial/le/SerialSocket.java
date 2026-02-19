@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.UUID;
 
+import io.github.edufolly.flutterbluetoothserial.BluetoothContextCompat;
+
 /**
  * wrap BLE communication into socket like class
  *   - connect, disconnect and write as methods,
@@ -152,9 +154,9 @@ class SerialSocket extends BluetoothGattCallback {
             throw new IOException("already connected");
         canceled = false;
         this.listener = listener;
-        context.registerReceiver(disconnectBroadcastReceiver, new IntentFilter(Constants.INTENT_ACTION_DISCONNECT));
+        BluetoothContextCompat.registerReceiver(context, disconnectBroadcastReceiver, new IntentFilter(Constants.INTENT_ACTION_DISCONNECT));
         Log.d(TAG, "connect "+device);
-        context.registerReceiver(pairingBroadcastReceiver, pairingIntentFilter);
+        BluetoothContextCompat.registerReceiver(context, pairingBroadcastReceiver, pairingIntentFilter);
         if (Build.VERSION.SDK_INT < 23) {
             Log.d(TAG, "connectGatt");
             gatt = device.connectGatt(context, false, this);

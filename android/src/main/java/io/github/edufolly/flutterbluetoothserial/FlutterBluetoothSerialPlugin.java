@@ -41,6 +41,7 @@ import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.github.edufolly.flutterbluetoothserial.le.BluetoothConnectionLE;
+import io.github.edufolly.flutterbluetoothserial.BluetoothContextCompat;
 
 public class FlutterBluetoothSerialPlugin implements FlutterPlugin, ActivityAware {
     // Plugin
@@ -329,7 +330,7 @@ public class FlutterBluetoothSerialPlugin implements FlutterPlugin, ActivityAwar
             public void onListen(Object o, EventSink eventSink) {
                 stateSink = eventSink;
 
-                activeContext.registerReceiver(stateReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
+                BluetoothContextCompat.registerReceiver(activeContext, stateReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
             }
 
             @Override
@@ -805,7 +806,7 @@ public class FlutterBluetoothSerialPlugin implements FlutterPlugin, ActivityAwar
 
                     final IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
                     //filter.setPriority(pairingRequestReceiverPriority + 1);
-                    activeContext.registerReceiver(bondStateBroadcastReceiver, filter);
+                    BluetoothContextCompat.registerReceiver(activeContext, bondStateBroadcastReceiver, filter);
 
                     if (!device.createBond()) {
                         result.error("bond_error", "error starting bonding process", null);
@@ -823,7 +824,7 @@ public class FlutterBluetoothSerialPlugin implements FlutterPlugin, ActivityAwar
                     FlutterBluetoothSerialPlugin.this.isPairingRequestHandlerSet = true;
                     final IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_PAIRING_REQUEST);
                     //filter.setPriority(pairingRequestReceiverPriority);
-                    activeContext.registerReceiver(pairingRequestReceiver, filter);
+                    BluetoothContextCompat.registerReceiver(activeContext, pairingRequestReceiver, filter);
                     break;
 
                 case "pairingRequestHandlingDisable":
@@ -873,7 +874,7 @@ public class FlutterBluetoothSerialPlugin implements FlutterPlugin, ActivityAwar
                         IntentFilter intent = new IntentFilter();
                         intent.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
                         intent.addAction(BluetoothDevice.ACTION_FOUND);
-                        activeContext.registerReceiver(discoveryReceiver, intent);
+                        BluetoothContextCompat.registerReceiver(activeContext, discoveryReceiver, intent);
 
                         bluetoothAdapter.startDiscovery();
 
